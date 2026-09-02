@@ -23,6 +23,14 @@ export default function Home() {
       <h1>Task Manager</h1>
       <input type="text"  placeholder="add a task" value={title} onChange={(e)=>setTitle(e.target.value)} />
       <button onClick={addTask}>add</button>
+
+      <ul>
+  {tasks.map((task) => (
+    <li key={task.id}>
+      {task.title}
+    </li>
+  ))}
+</ul>
     </main>
   );
 }
