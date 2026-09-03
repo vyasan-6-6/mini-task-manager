@@ -2,12 +2,12 @@
 import { useState } from "react";
 import type { Task } from "./types";
 import TaskItem from './components/TaskItem';
+import TaskForm from "./components/TaskForm";
 
 export default function Home() {
   const [tasks,setTasks] = useState<Task[]>([]);
-  const [title,setTitle] = useState('')
 
-  const addTask = ()=>{
+  const addTask = (title:string)=>{
     if(title.trim()==='') return;
 
     const newTask:Task = {
@@ -16,7 +16,6 @@ export default function Home() {
       completed:false
     }
     setTasks([...tasks,newTask]);
-    setTitle("");
   }
     const toggleTask = (id: number) => {
   setTasks(
@@ -35,9 +34,7 @@ setTasks(tasks.filter((task)=>task.id !== id));
   return (
     <main>
       <h1>Task Manager</h1>
-      <input type="text"  placeholder="add a task" value={title} onChange={(e)=>setTitle(e.target.value)} />
-      <button onClick={addTask}>add</button>
-
+       <TaskForm onAddTask={addTask}/>
       <ul>
   {tasks.map((task) => (
     <TaskItem key={task.id} task={task} onDelete={deleteTask} onToggle={toggleTask}/>
