@@ -26,6 +26,10 @@ export default function Home() {
     )
   );
 };
+
+const deleteTask = (id:number)=>{
+setTasks(tasks.filter((task)=>task.id !== id));
+}
   
   return (
     <main>
@@ -45,6 +49,9 @@ export default function Home() {
 </span>
  <button onClick={() => toggleTask(task.id)}>
     {task.completed ? " Undo" : " Complete"}
+  </button>
+ <button onClick={() => deleteTask(task.id)}>
+    delete
   </button>
 </li>
   ))}
