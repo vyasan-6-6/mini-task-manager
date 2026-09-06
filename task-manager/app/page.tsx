@@ -1,11 +1,30 @@
 'use client' 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { Task } from "./types";
 import TaskItem from './components/TaskItem';
 import TaskForm from "./components/TaskForm";
 
 export default function Home() {
   const [tasks,setTasks] = useState<Task[]>([]);
+   const [isLoaded, setIsLoaded] = useState(false);
+
+  // Load tasks from localStorage
+  useEffect(() => {
+    const savedTasks = localStorage.getItem("tasks");
+
+    if (savedTasks) {
+      setTasks(JSON.parse(savedTasks));
+    }
+
+    setIsLoaded(true);
+  }, []);
+
+  // Save tasks to localStorage
+  useEffect(() => {
+    if (!isLoaded) return;
+
+    localStorage.setItem("tasks", JSON.stringify(tasks));
+  }, [tasks, isLoaded]);
 
   const addTask = (title:string)=>{
     if(title.trim()==='') return;
