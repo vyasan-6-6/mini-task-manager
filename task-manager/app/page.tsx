@@ -10,6 +10,11 @@ export default function Home() {
   const [filter,setFilter] = useState<'all' | 'completed' | 'active'>('all');
    const [isLoaded, setIsLoaded] = useState(false);
 
+   const clearCompleted = () => {
+  setTasks((previousTasks) =>
+    previousTasks.filter((task) => !task.completed)
+  );
+};
   // Load tasks from localStorage
   useEffect(() => {
     const savedTasks = localStorage.getItem("tasks");
@@ -92,6 +97,12 @@ const filteredTasks = tasks.filter((task) => {
   </button>
 </div>
 <p>{activeTaskCount} tasks remaining</p>
+<button
+  className="border px-3 py-1 rounded mb-4"
+  onClick={clearCompleted}
+>
+  Clear Completed
+</button>
       <ul>
   {filteredTasks.map((task) => (
     <TaskItem key={task.id} task={task} onDelete={deleteTask} onToggle={toggleTask}/>
