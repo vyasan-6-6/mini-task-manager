@@ -6,6 +6,7 @@ import TaskForm from "./components/TaskForm";
 
 export default function Home() {
   const [tasks,setTasks] = useState<Task[]>([]);
+  const [filter,setFilter] = useState<'all' | 'completed' | 'active'>('all');
    const [isLoaded, setIsLoaded] = useState(false);
 
   // Load tasks from localStorage
@@ -50,12 +51,28 @@ const deleteTask = (id:number)=>{
 setTasks(tasks.filter((task)=>task.id !== id));
 }
   
+const filteredTasks = tasks.filter((task) => {
+  if (filter === "active") {
+    return !task.completed;
+  }
+
+  if (filter === "completed") {
+    return task.completed;
+  }
+
+  return true;
+});
   return (
     <main>
       <h1>Task Manager</h1>
        <TaskForm onAddTask={addTask}/>
+       <div>
+  <button onClick={() => setFilter("all")}>All</button>
+  <button onClick={() => setFilter("active")}>Active</button>
+  <button onClick={() => setFilter("completed")}>Completed</button>
+</div>
       <ul>
-  {tasks.map((task) => (
+  {filteredTasks.map((task) => (
     <TaskItem key={task.id} task={task} onDelete={deleteTask} onToggle={toggleTask}/>
   ))}
 </ul>
