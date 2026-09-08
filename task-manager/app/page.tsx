@@ -56,6 +56,15 @@ export default function Home() {
 const deleteTask = (id:number)=>{
 setTasks(tasks.filter((task)=>task.id !== id));
 }
+
+  // Update a task's title by matching its id
+  const editTask = (id: number, newTitle: string) => {
+    setTasks(
+      tasks.map((task) =>
+        task.id === id ? { ...task, title: newTitle } : task
+      )
+    );
+  };
   
 const filteredTasks = tasks.filter((task) => {
   if (filter === "active") {
@@ -105,7 +114,13 @@ const filteredTasks = tasks.filter((task) => {
 </button>
       <ul>
   {filteredTasks.map((task) => (
-    <TaskItem key={task.id} task={task} onDelete={deleteTask} onToggle={toggleTask}/>
+    <TaskItem
+      key={task.id}
+      task={task}
+      onDelete={deleteTask}
+      onToggle={toggleTask}
+      onEdit={editTask}
+    />
   ))}
 </ul>
     </main>
