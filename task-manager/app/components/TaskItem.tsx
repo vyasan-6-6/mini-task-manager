@@ -61,7 +61,7 @@ export default function TaskItem({
             Save
           </button>
           <button
-            className="border px-2.5 py-1 rounded text-sm hover:bg-gray-100"
+            className="border px-2.5 py-1 rounded text-sm hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
             onClick={handleCancel}
           >
             Cancel
@@ -79,7 +79,7 @@ export default function TaskItem({
           <div className="flex items-center">
             {/* Edit Button */}
             <button
-              className="border px-2 py-1 rounded ml-3 hover:bg-gray-100"
+              className="border px-2 py-1 rounded ml-3 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
               onClick={() => setIsEditing(true)}
             >
               Edit
@@ -87,7 +87,7 @@ export default function TaskItem({
 
             {/* Toggle Complete Button */}
             <button
-              className="border px-2 py-1 rounded ml-2 hover:bg-gray-100"
+              className="border px-2 py-1 rounded ml-2 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
               onClick={() => onToggle(task.id)}
             >
               {task.completed ? "Undo" : "Complete"}
@@ -95,7 +95,7 @@ export default function TaskItem({
 
             {/* Delete Button */}
             <button
-              className="border px-2 py-1 rounded ml-2 text-red-600 border-red-200 hover:bg-red-50"
+              className="border px-2 py-1 rounded ml-2 text-red-600 border-red-200 hover:bg-red-50 dark:hover:bg-red-950 transition-colors"
               onClick={() => onDelete(task.id)}
             >
               Delete
