@@ -1,6 +1,6 @@
 'use client' 
 import { useEffect, useState } from "react";
-import type { Task } from "./types";
+import type { Task, Priority } from "./types";
 import TaskItem from './components/TaskItem';
 import TaskForm from "./components/TaskForm";
 
@@ -34,13 +34,15 @@ export default function Home() {
     localStorage.setItem("tasks", JSON.stringify(tasks));
   }, [tasks, isLoaded]);
 
-  const addTask = (title:string)=>{
+  const addTask = (title: string, dueDate?: string, priority?: Priority) => {
     if(title.trim()==='') return;
 
     const newTask:Task = {
       id:Date.now(),
       title:title,
-      completed:false
+      completed:false,
+      dueDate,
+      priority
     }
     setTasks([...tasks,newTask]);
   }
@@ -58,11 +60,11 @@ const deleteTask = (id:number)=>{
 setTasks(tasks.filter((task)=>task.id !== id));
 }
 
-  // Update a task's title by matching its id
-  const editTask = (id: number, newTitle: string) => {
+  // Update a task's properties by matching its id
+  const editTask = (id: number, newTitle: string, dueDate?: string, priority?: Priority) => {
     setTasks(
       tasks.map((task) =>
-        task.id === id ? { ...task, title: newTitle } : task
+        task.id === id ? { ...task, title: newTitle, dueDate, priority } : task
       )
     );
   };
