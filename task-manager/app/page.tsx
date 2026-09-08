@@ -6,6 +6,7 @@ import TaskForm from "./components/TaskForm";
 
 export default function Home() {
   const [tasks,setTasks] = useState<Task[]>([]);
+  const activeTaskCount = tasks.filter((task) => !task.completed).length;
   const [filter,setFilter] = useState<'all' | 'completed' | 'active'>('all');
    const [isLoaded, setIsLoaded] = useState(false);
 
@@ -71,6 +72,7 @@ const filteredTasks = tasks.filter((task) => {
   <button onClick={() => setFilter("active")}>Active</button>
   <button onClick={() => setFilter("completed")}>Completed</button>
 </div>
+<p>{activeTaskCount} tasks remaining</p>
       <ul>
   {filteredTasks.map((task) => (
     <TaskItem key={task.id} task={task} onDelete={deleteTask} onToggle={toggleTask}/>
