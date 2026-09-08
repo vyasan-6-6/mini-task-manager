@@ -64,8 +64,10 @@ const filteredTasks = tasks.filter((task) => {
   return true;
 });
   return (
-    <main>
-      <h1>Task Manager</h1>
+   <main className="max-w-xl mx-auto mt-10 p-6">
+  <h1 className="text-3xl font-bold text-center mb-6">
+    Task Manager
+  </h1>
        <TaskForm onAddTask={addTask}/>
        <div>
   <button onClick={() => setFilter("all")}>All</button>
