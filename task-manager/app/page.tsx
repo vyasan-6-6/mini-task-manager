@@ -8,7 +8,8 @@ export default function Home() {
   const [tasks,setTasks] = useState<Task[]>([]);
   const activeTaskCount = tasks.filter((task) => !task.completed).length;
   const [filter,setFilter] = useState<'all' | 'completed' | 'active'>('all');
-   const [isLoaded, setIsLoaded] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [isLoaded, setIsLoaded] = useState(false);
 
    const clearCompleted = () => {
   setTasks((previousTasks) =>
@@ -66,23 +67,43 @@ setTasks(tasks.filter((task)=>task.id !== id));
     );
   };
   
-const filteredTasks = tasks.filter((task) => {
-  if (filter === "active") {
-    return !task.completed;
-  }
+  // Filter tasks based on selected status filter AND search query
+  const filteredTasks = tasks.filter((task) => {
+    const matchesSearch = task.title
+      .toLowerCase()
+      .includes(searchQuery.toLowerCase().trim());
 
-  if (filter === "completed") {
-    return task.completed;
-  }
+    if (!matchesSearch) return false;
 
-  return true;
-});
+    if (filter === "active") {
+      return !task.completed;
+    }
+
+    if (filter === "completed") {
+      return task.completed;
+    }
+
+    return true;
+  });
+
   return (
    <main className="max-w-xl mx-auto mt-10 p-6">
   <h1 className="text-3xl font-bold text-center mb-6">
     Task Manager
   </h1>
        <TaskForm onAddTask={addTask}/>
+
+       {/* Search Bar Input */}
+       <div className="mb-4">
+         <input
+           type="text"
+           placeholder="Search tasks..."
+           value={searchQuery}
+           onChange={(e) => setSearchQuery(e.target.value)}
+           className="w-full border px-3 py-2 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+         />
+       </div>
+
       <div className="flex gap-2 mb-4">
   <button
     className="border px-3 py-1 rounded"
