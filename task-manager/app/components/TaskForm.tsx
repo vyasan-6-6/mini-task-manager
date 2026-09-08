@@ -13,14 +13,16 @@ const handleSubmit = ()=>{
    setTitle('');
 }
 return (
-    <div>
+    <div className="flex gap-2 mb-6">
       <input
         value={title}
         onChange={(e) => setTitle(e.target.value)}
         placeholder="Enter a task"
+        className="flex-1 border   rounded-lg px-3 py-2"
       />
 
-      <button onClick={handleSubmit}>Add</button>
+      <button onClick={handleSubmit}     className="bg-black text-white px-4 py-2 rounded-lg"
+>Add</button>
     </div>
 )
 }

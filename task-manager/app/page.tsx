@@ -69,10 +69,27 @@ const filteredTasks = tasks.filter((task) => {
     Task Manager
   </h1>
        <TaskForm onAddTask={addTask}/>
-       <div>
-  <button onClick={() => setFilter("all")}>All</button>
-  <button onClick={() => setFilter("active")}>Active</button>
-  <button onClick={() => setFilter("completed")}>Completed</button>
+      <div className="flex gap-2 mb-4">
+  <button
+    className="border px-3 py-1 rounded"
+    onClick={() => setFilter("all")}
+  >
+    All
+  </button>
+
+  <button
+    className="border px-3 py-1 rounded"
+    onClick={() => setFilter("active")}
+  >
+    Active
+  </button>
+
+  <button
+    className="border px-3 py-1 rounded"
+    onClick={() => setFilter("completed")}
+  >
+    Completed
+  </button>
 </div>
 <p>{activeTaskCount} tasks remaining</p>
       <ul>
