@@ -31,18 +31,26 @@ export default function Home() {
   }, []);
 
 
-  const addTask = (title: string, dueDate?: string, priority?: Priority) => {
-    if(title.trim()==='') return;
+  // Step 4: Add a new task by calling POST /api/tasks
+  const addTask = async (title: string, dueDate?: string, priority?: Priority) => {
+    if (title.trim() === '') return;
 
-    const newTask:Task = {
-      id:Date.now(),
-      title:title,
-      completed:false,
-      dueDate,
-      priority
+    try {
+      const response = await fetch("/api/tasks", {
+        method: "POST", // HTTP method POST sends new data to the server
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ title, dueDate, priority }), // Payload sent as JSON
+      });
+
+      if (!response.ok) throw new Error("Failed to create task");
+      const newTask: Task = await response.json(); // Server returns the created task
+
+      setTasks((prevTasks) => [...prevTasks, newTask]); // Add created task to state
+    } catch (error) {
+      console.error("Error adding task via API:", error);
     }
-    setTasks([...tasks,newTask]);
-  }
+  };
+
     const toggleTask = (id: number) => {
   setTasks(
     tasks.map((task) =>
