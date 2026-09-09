@@ -9,30 +9,27 @@ export default function Home() {
   const activeTaskCount = tasks.filter((task) => !task.completed).length;
   const [filter,setFilter] = useState<'all' | 'completed' | 'active'>('all');
   const [searchQuery, setSearchQuery] = useState("");
-  const [isLoaded, setIsLoaded] = useState(false);
 
    const clearCompleted = () => {
   setTasks((previousTasks) =>
     previousTasks.filter((task) => !task.completed)
   );
 };
-  // Load tasks from localStorage
+  // Step 3: Fetch initial task list from our Next.js API route (GET /api/tasks)
   useEffect(() => {
-    const savedTasks = localStorage.getItem("tasks");
-
-    if (savedTasks) {
-      setTasks(JSON.parse(savedTasks));
+    async function loadTasksFromApi() {
+      try {
+        const response = await fetch("/api/tasks"); // Calls GET /api/tasks on server
+        const data: Task[] = await response.json(); // Converts JSON response to Task[]
+        setTasks(data); // Updates React state with server tasks
+      } catch (error) {
+        console.error("Error fetching tasks from API:", error);
+      }
     }
 
-    setIsLoaded(true);
+    loadTasksFromApi();
   }, []);
 
-  // Save tasks to localStorage
-  useEffect(() => {
-    if (!isLoaded) return;
-
-    localStorage.setItem("tasks", JSON.stringify(tasks));
-  }, [tasks, isLoaded]);
 
   const addTask = (title: string, dueDate?: string, priority?: Priority) => {
     if(title.trim()==='') return;
