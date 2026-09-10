@@ -10,11 +10,21 @@ export default function Home() {
   const [filter,setFilter] = useState<'all' | 'completed' | 'active'>('all');
   const [searchQuery, setSearchQuery] = useState("");
 
-   const clearCompleted = () => {
-  setTasks((previousTasks) =>
-    previousTasks.filter((task) => !task.completed)
-  );
-};
+  // Step 5a: Clear completed tasks via API (DELETE /api/tasks?action=clearCompleted)
+  const clearCompleted = async () => {
+    try {
+      const response = await fetch("/api/tasks?action=clearCompleted", {
+        method: "DELETE",
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setTasks(data.tasks);
+      }
+    } catch (error) {
+      console.error("Error clearing completed tasks:", error);
+    }
+  };
+
   // Step 3: Fetch initial task list from our Next.js API route (GET /api/tasks)
   useEffect(() => {
     async function loadTasksFromApi() {
@@ -51,28 +61,69 @@ export default function Home() {
     }
   };
 
-    const toggleTask = (id: number) => {
-  setTasks(
-    tasks.map((task) =>
-      task.id === id
-        ? { ...task, completed: !task.completed }
-        : task
-    )
-  );
-};
+  // Step 5b: Toggle completed status via API (PUT /api/tasks/[id])
+  const toggleTask = async (id: number) => {
+    const targetTask = tasks.find((t) => t.id === id);
+    if (!targetTask) return;
 
-const deleteTask = (id:number)=>{
-setTasks(tasks.filter((task)=>task.id !== id));
-}
+    try {
+      const response = await fetch(`/api/tasks/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ completed: !targetTask.completed }),
+      });
 
-  // Update a task's properties by matching its id
-  const editTask = (id: number, newTitle: string, dueDate?: string, priority?: Priority) => {
-    setTasks(
-      tasks.map((task) =>
-        task.id === id ? { ...task, title: newTitle, dueDate, priority } : task
-      )
-    );
+      if (response.ok) {
+        const updatedTask: Task = await response.json();
+        setTasks((prevTasks) =>
+          prevTasks.map((t) => (t.id === id ? updatedTask : t))
+        );
+      }
+    } catch (error) {
+      console.error("Error toggling task via API:", error);
+    }
   };
+
+  // Step 5c: Delete a task by ID via API (DELETE /api/tasks/[id])
+  const deleteTask = async (id: number) => {
+    try {
+      const response = await fetch(`/api/tasks/${id}`, {
+        method: "DELETE",
+      });
+
+      if (response.ok) {
+        setTasks((prevTasks) => prevTasks.filter((t) => t.id !== id));
+      }
+    } catch (error) {
+      console.error("Error deleting task via API:", error);
+    }
+  };
+
+  // Step 5d: Edit task details via API (PUT /api/tasks/[id])
+  const editTask = async (
+    id: number,
+    newTitle: string,
+    dueDate?: string,
+    priority?: Priority
+  ) => {
+    try {
+      const response = await fetch(`/api/tasks/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ title: newTitle, dueDate, priority }),
+      });
+
+      if (response.ok) {
+        const updatedTask: Task = await response.json();
+        setTasks((prevTasks) =>
+          prevTasks.map((t) => (t.id === id ? updatedTask : t))
+        );
+      }
+    } catch (error) {
+      console.error("Error editing task via API:", error);
+    }
+  };
+
   
   // Filter tasks based on selected status filter AND search query
   const filteredTasks = tasks.filter((task) => {
