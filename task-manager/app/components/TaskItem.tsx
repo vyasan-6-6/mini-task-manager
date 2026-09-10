@@ -3,9 +3,10 @@ import type { Task, Priority } from "../types";
 
 type TaskItemProps = {
   task: Task;
-  onToggle: (id: number) => void;
-  onDelete: (id: number) => void;
-  onEdit: (id: number, newTitle: string, dueDate?: string, priority?: Priority) => void;
+  onToggle: (id: number) => Promise<void> | void;
+  onDelete: (id: number) => Promise<void> | void;
+  onEdit: (id: number, newTitle: string, dueDate?: string, priority?: Priority) => Promise<void> | void;
+  isPending?: boolean;
 };
 
 const priorityColors = {
@@ -19,15 +20,16 @@ export default function TaskItem({
   onToggle,
   onDelete,
   onEdit,
+  isPending = false,
 }: TaskItemProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [editedTitle, setEditedTitle] = useState(task.title);
   const [editedDueDate, setEditedDueDate] = useState(task.dueDate || "");
   const [editedPriority, setEditedPriority] = useState<Priority>(task.priority || "medium");
 
-  const handleSave = () => {
-    if (editedTitle.trim() === "") return;
-    onEdit(task.id, editedTitle.trim(), editedDueDate || undefined, editedPriority);
+  const handleSave = async () => {
+    if (editedTitle.trim() === "" || isPending) return;
+    await onEdit(task.id, editedTitle.trim(), editedDueDate || undefined, editedPriority);
     setIsEditing(false);
   };
 
@@ -47,7 +49,7 @@ export default function TaskItem({
   };
 
   return (
-    <li className="flex flex-col sm:flex-row sm:items-center justify-between border-b py-3 gap-3">
+    <li className={`flex flex-col sm:flex-row sm:items-center justify-between border-b py-3 gap-3 transition-opacity ${isPending ? 'opacity-50 pointer-events-none' : ''}`}>
       {isEditing ? (
         <div className="flex flex-col sm:flex-row items-center gap-2 flex-1 w-full">
           <input
@@ -56,6 +58,7 @@ export default function TaskItem({
             value={editedTitle}
             onChange={(e) => setEditedTitle(e.target.value)}
             onKeyDown={handleKeyDown}
+            disabled={isPending}
             autoFocus
           />
           <div className="flex gap-2 w-full sm:w-auto">
@@ -65,11 +68,13 @@ export default function TaskItem({
               value={editedDueDate}
               onChange={(e) => setEditedDueDate(e.target.value)}
               onKeyDown={handleKeyDown}
+              disabled={isPending}
             />
             <select
               value={editedPriority}
               onChange={(e) => setEditedPriority(e.target.value as Priority)}
               onKeyDown={handleKeyDown}
+              disabled={isPending}
               className="border px-2 py-1 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 w-full sm:w-auto"
             >
               <option value="low">Low</option>
@@ -79,14 +84,16 @@ export default function TaskItem({
           </div>
           <div className="flex gap-2 shrink-0">
             <button
-              className="bg-blue-600 text-white px-2.5 py-1 rounded text-sm hover:bg-blue-700"
+              className="bg-blue-600 text-white px-2.5 py-1 rounded text-sm hover:bg-blue-700 disabled:opacity-50"
               onClick={handleSave}
+              disabled={isPending}
             >
               Save
             </button>
             <button
-              className="border px-2.5 py-1 rounded text-sm hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+              className="border px-2.5 py-1 rounded text-sm hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors disabled:opacity-50"
               onClick={handleCancel}
+              disabled={isPending}
             >
               Cancel
             </button>
@@ -114,22 +121,25 @@ export default function TaskItem({
 
           <div className="flex items-center shrink-0">
             <button
-              className="border px-2 py-1 rounded ml-3 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-sm"
+              className="border px-2 py-1 rounded ml-3 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-sm disabled:opacity-50"
               onClick={() => setIsEditing(true)}
+              disabled={isPending}
             >
               Edit
             </button>
 
             <button
-              className="border px-2 py-1 rounded ml-2 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-sm"
+              className="border px-2 py-1 rounded ml-2 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-sm disabled:opacity-50"
               onClick={() => onToggle(task.id)}
+              disabled={isPending}
             >
               {task.completed ? "Undo" : "Complete"}
             </button>
 
             <button
-              className="border px-2 py-1 rounded ml-2 text-red-600 border-red-200 hover:bg-red-50 dark:hover:bg-red-950 transition-colors text-sm"
+              className="border px-2 py-1 rounded ml-2 text-red-600 border-red-200 hover:bg-red-50 dark:hover:bg-red-950 transition-colors text-sm disabled:opacity-50"
               onClick={() => onDelete(task.id)}
+              disabled={isPending}
             >
               Delete
             </button>
@@ -138,4 +148,4 @@ export default function TaskItem({
       )}
     </li>
   );
-}
+}
